@@ -58,11 +58,35 @@
 		$output = [];
 		parse_str($parts['query'], $output);
 		$id = $output['id'];
-		curl_setopt($ch, CURLOPT_URL, 'https://www.polarpersonaltrainer.com/user/calendar/index.jxml?.action=export&items.0.item='.$id.'&items.0.itemType=OptimizedExercise&.filename=Kontrabass_04.05.2016_export.xml');
+
+		curl_setopt($ch, CURLOPT_URL, 'https://www.polarpersonaltrainer.com/user/calendar/index.jxml?.action=export&items.0.item='.$id.'&items.0.itemType=OptimizedExercise&.filename=filename_04.05.2016_export.xml');
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
 		$result = curl_exec($ch);
 
 		$myfile = fopen("files/".$id.".xml", "w") or die("Unable to open file!");
+		fwrite($myfile, $result);
+		fclose($myfile);
+
+		// Grab the gpx
+		$gpxFields = array();
+		$gpxFields['.action'] = 'gpx';
+		$gpxFields['items.0.item'] = $id;
+		$gpxFields['items.0.itemType'] = 'OptimizedExercise';
+
+		$gpxUrl   = "https://www.polarpersonaltrainer.com/user/calendar/index.gpx?";
+
+		$postFields = http_build_query($gpxFields);
+
+		curl_setopt($ch, CURLOPT_URL, $gpxUrl);
+
+		curl_setopt($ch, CURLOPT_POST, 1);
+		curl_setopt($ch, CURLOPT_POSTFIELDS, $postFields);
+
+		curl_setopt($ch, CURLOPT_URL, $gpxUrl);
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+		$result = curl_exec($ch);
+
+		$myfile = fopen("files/".$id.".gpx", "w") or die("Unable to open file!");
 		fwrite($myfile, $result);
 		fclose($myfile);
 	}
