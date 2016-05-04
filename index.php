@@ -29,11 +29,6 @@
 	$fields['email'] = $EMAIL;
 	$fields['password'] = $PASSWORD;
 
-	$x = '';
-	if (preg_match('/index\.tpl\?x=(\d+)/i', $content, $match)) {
-		$x = $match[1];
-	}
-
 	$LOGINURL   = "https://www.polarpersonaltrainer.com/index.ftl?";
 
 	$POSTFIELDS = http_build_query($fields);
